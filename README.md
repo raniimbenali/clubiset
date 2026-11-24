@@ -6,7 +6,43 @@ Gestion d'un club étudiant : membres, cotisations, événements et inscriptions
 
 
 
-\## Démarrage local
+\## Démarrage en une commande
+
+
+
+Prérequis : Docker Desktop.
+
+
+
+Première fois seulement, créer le fichier de configuration (puis choisir un mot de passe dedans) :
+
+
+
+&#x20;   copy .env.example .env
+
+
+
+Démarrer l'application et sa base PostgreSQL :
+
+
+
+&#x20;   docker compose up -d --build --wait
+
+
+
+Vérifier : http://localhost:5000/health
+
+
+
+Arrêter (les données sont conservées dans un volume) :
+
+
+
+&#x20;   docker compose down
+
+
+
+\## Développement local sans Docker
 
 
 
@@ -16,11 +52,5 @@ Gestion d'un club étudiant : membres, cotisations, événements et inscriptions
 
 &#x20;   pip install -r requirements.txt
 
-&#x20;   pytest -v
-
-&#x20;   flask --app app run
-
-
-
-Santé de l'application : http://localhost:5000/health
+&#x20;   ./scripts/check.sh
 
