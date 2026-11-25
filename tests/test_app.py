@@ -53,3 +53,10 @@ def test_full_event_is_refused(client):
     client.post(f"/events/{eid}/register", json={"member_id": make_member(client, "a@iset.tn")})
     r = client.post(f"/events/{eid}/register", json={"member_id": make_member(client, "b@iset.tn")})
     assert r.status_code == 409
+
+def test_list_event_members(client):
+    eid, mid = make_event(client), make_member(client)
+    client.post(f"/events/{eid}/register", json={"member_id": mid})
+    r = client.get(f"/events/{eid}/members")
+    assert r.status_code == 200
+    assert [m["name"] for m in r.get_json()] == ["Nadia"]
