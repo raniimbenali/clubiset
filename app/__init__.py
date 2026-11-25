@@ -104,5 +104,13 @@ def create_app(database_url=None):
         db.session.add(Registration(member_id=member.id, event_id=event.id))
         db.session.commit()
         return jsonify(status="inscrit"), 201
+    @app.get("/events/<int:event_id>/members")
+    def event_members(event_id):
+        event = db.get_or_404(Event, event_id)
+        members = (Member.query
+                   .join(Registration, Registration.member_id == Member.id)
+                   .filter(Registration.event_id == event.id)
+                   .all())
+        return jsonify([{"id": m.id, "name": m.name} for m in members])
 
     return app
