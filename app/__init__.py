@@ -95,7 +95,7 @@ def create_app(database_url=None):
         member = db.get_or_404(Member, request.get_json(force=True)["member_id"])
 
         if not member.dues_paid:
-            return jsonify(error="cotisation non payée"), 403
+            return jsonify(error="cotisation non payée"), 200
         if Registration.query.filter_by(member_id=member.id, event_id=event.id).first():
             return jsonify(error="déjà inscrit"), 409
         if Registration.query.filter_by(event_id=event.id).count() >= event.capacity:
