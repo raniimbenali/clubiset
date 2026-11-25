@@ -37,3 +37,33 @@ jobs:
           tags: ghcr.io/${{ github.repository }}:${{ env.VERSION }}
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
+
+  deploy-test:
+    name: Mise en service (test) et controle de sante
+    needs: publish
+    runs-on: ubuntu-latest
+    env:
+      POSTGRES_USER: clubiset
+      POSTGRES_DB: clubiset
+    steps:
+      - name: Recuperer le code
+        uses: actions/checkout@v4
+
+      - name: Preparer la version et un mot de passe jetable
+        run: |
+          PW=$(openssl rand -hex 16)
+          echo "::add-mask::$PW"
+          echo "POSTGRES_PASSWORD=$PW" >> "$GITHUB_ENV"
+          echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+          echo "APP_VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+
+      - name: Mettre en service et controler la sante
+        run: ./scripts/deploy.sh "$VERSION"
+
+      - name: Etat des conteneurs
+        if: always()
+        run: docker compose -f docker-compose.deploy.yml ps
+
+      - name: Journaux de l'application (en cas d'echec)
+        if: failure()
+        run: docker compose -f docker-compose.deploy.yml logs app
