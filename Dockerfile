@@ -17,6 +17,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY --chown=app:app app ./app
 
+# Version inscrite dans l'image au moment de la construction
+ARG APP_VERSION=dev
+ENV APP_VERSION=${APP_VERSION}
+
 USER app
 
 EXPOSE 5000
